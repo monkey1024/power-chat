@@ -163,7 +163,7 @@ public class ChatController implements Initializable {
     }
 
     public void setImageLabel() {
-        this.userImageView.setImage(new Image(getClass().getClassLoader().getResource("images/dominic.png").toString()));
+        this.userImageView.setImage(new Image(getClass().getClassLoader().getResource("images/default.png").toString()));
     }
 
     public void setOnlineLabel(String count) {
