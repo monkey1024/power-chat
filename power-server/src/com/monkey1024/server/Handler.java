@@ -90,7 +90,6 @@ public class Handler implements Runnable {
         msg.setMsg("开始聊天啦");
         msg.setType(MessageType.NOTIFICATION);
         msg.setName(message.getName());
-        msg.setPicture(message.getPicture());
         write(msg,outputStream);
         return msg;
     }

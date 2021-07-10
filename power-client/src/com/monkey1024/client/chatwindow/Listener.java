@@ -59,7 +59,7 @@ public class Listener implements Runnable{
                             controller.newUserNotification(message);
                             break;
                         case SERVER:
-                            controller.addAsServer(message);
+                            //controller.addAsServer(message);
                             break;
                         case CONNECTED:
                         case DISCONNECTED:

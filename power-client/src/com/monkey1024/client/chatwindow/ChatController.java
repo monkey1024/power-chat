@@ -84,77 +84,78 @@ public class ChatController implements Initializable {
         }
     }
 
+    /**
+     *  根据消息发送者的不同从而改变展示的效果
+     * @param msg  发送的消息
+     * @param flag  true表示自己发送的，false表示别人发送
+     * @return
+     */
+    private HBox showMessage(Message msg, boolean flag) {
+        Label label = new Label(msg.getName());
+        BubbledLabel bl6 = new BubbledLabel();
+        //判断是语音消息还是文字消息
+        if (msg.getType() == MessageType.VOICE){
+            bl6.setGraphic(new ImageView(new Image(getClass().getClassLoader().getResource("images/sound.png").toString())));
+            bl6.setText("语音消息");
+            VoicePlayback.playAudio(msg.getVoiceMsg());
+        }else {
+            bl6.setText(msg.getMsg());
+        }
+        HBox hBox = new HBox();
+
+        //判断是自己发送的消息还是别人发送的消息
+        if (flag) {
+            bl6.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN,
+                    null, null)));
+            hBox.setMaxWidth(chatPane.getWidth() - 20);
+            hBox.setAlignment(Pos.TOP_RIGHT);
+            bl6.setBubbleSpec(BubbleSpec.FACE_RIGHT_CENTER);
+            hBox.getChildren().addAll(bl6, label);
+
+            setOnlineLabel(Integer.toString(msg.getUserList().size()));
+        }else {
+            bl6.setBackground(new Background(new BackgroundFill(Color.WHITE,null, null)));
+
+            bl6.setBubbleSpec(BubbleSpec.FACE_LEFT_CENTER);
+            hBox.getChildren().addAll(label, bl6);
+            setOnlineLabel(Integer.toString(msg.getUserList().size()));
+        }
+
+        return hBox;
+    }
+
     /*
-        加入聊天
+        将信息展示到界面中
      */
     public synchronized void addToChat(Message msg) {
-        //别人发送的消息
-        Task<HBox> othersMessages = new Task<HBox>() {
-            @Override
-            public HBox call() throws Exception {
-                Image image = new Image(getClass().getClassLoader().getResource("images/" + msg.getPicture().toLowerCase() + ".png").toString());
-                ImageView profileImage = new ImageView(image);
-                profileImage.setFitHeight(32);
-                profileImage.setFitWidth(32);
-                BubbledLabel bl6 = new BubbledLabel();
-                if (msg.getType() == MessageType.VOICE){
-                    ImageView imageview = new ImageView(new Image(getClass().getClassLoader().getResource("images/sound.png").toString()));
-                    bl6.setGraphic(imageview);
-                    bl6.setText("语音消息");
-                    VoicePlayback.playAudio(msg.getVoiceMsg());
-                }else {
-                    bl6.setText(msg.getName() + ": " + msg.getMsg());
-                }
-                bl6.setBackground(new Background(new BackgroundFill(Color.WHITE,null, null)));
-                HBox x = new HBox();
-                bl6.setBubbleSpec(BubbleSpec.FACE_LEFT_CENTER);
-                x.getChildren().addAll(profileImage, bl6);
-                setOnlineLabel(Integer.toString(msg.getUserList().size()));
-                return x;
-            }
-        };
 
-        othersMessages.setOnSucceeded(event -> chatPane.getItems().add(othersMessages.getValue()));
-
-        //自己发送的消息
-        Task<HBox> yourMessages = new Task<HBox>() {
-            @Override
-            public HBox call() throws Exception {
-                Image image = userImageView.getImage();
-                ImageView profileImage = new ImageView(image);
-                profileImage.setFitHeight(32);
-                profileImage.setFitWidth(32);
-
-                BubbledLabel bl6 = new BubbledLabel();
-                if (msg.getType() == MessageType.VOICE){
-                    bl6.setGraphic(new ImageView(new Image(getClass().getClassLoader().getResource("images/sound.png").toString())));
-                    bl6.setText("语音消息");
-                    VoicePlayback.playAudio(msg.getVoiceMsg());
-                }else {
-                    bl6.setText(msg.getMsg());
-                }
-                bl6.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN,
-                        null, null)));
-                HBox x = new HBox();
-                x.setMaxWidth(chatPane.getWidth() - 20);
-                x.setAlignment(Pos.TOP_RIGHT);
-                bl6.setBubbleSpec(BubbleSpec.FACE_RIGHT_CENTER);
-                x.getChildren().addAll(bl6, profileImage);
-
-                setOnlineLabel(Integer.toString(msg.getUserList().size()));
-                return x;
-            }
-        };
-        yourMessages.setOnSucceeded(event -> chatPane.getItems().add(yourMessages.getValue()));
-
+        //判断当前是谁发送的信息
         if (msg.getName().equals(usernameLabel.getText())) {
-            Thread t2 = new Thread(yourMessages);
-            t2.setDaemon(true);
-            t2.start();
+            //自己发送的消息
+            Task<HBox> yourMessages = new Task<HBox>() {
+                @Override
+                public HBox call() {
+                    return showMessage(msg,true);
+                }
+            };
+            yourMessages.setOnSucceeded(event -> chatPane.getItems().add(yourMessages.getValue()));
+
+            Thread yourThread = new Thread(yourMessages);
+            yourThread.setDaemon(true);
+            yourThread.start();
         } else {
-            Thread t = new Thread(othersMessages);
-            t.setDaemon(true);
-            t.start();
+            //别人发送的消息
+            Task<HBox> othersMessages = new Task<HBox>() {
+                @Override
+                public HBox call() {
+                    return showMessage(msg,false);
+                }
+            };
+            othersMessages.setOnSucceeded(event -> chatPane.getItems().add(othersMessages.getValue()));
+
+            Thread otherThread = new Thread(othersMessages);
+            otherThread.setDaemon(true);
+            otherThread.start();
         }
     }
     public void setUsernameLabel(String username) {
@@ -173,7 +174,6 @@ public class ChatController implements Initializable {
         Platform.runLater(() -> {
             ObservableList<User> users = FXCollections.observableList(msg.getUserList());
             userList.setItems(users);
-
             setOnlineLabel(String.valueOf(msg.getUserList().size()));
         });
     }
@@ -208,36 +208,15 @@ public class ChatController implements Initializable {
         }
     }
 
+    /**
+     *  关闭应用
+     */
     @FXML
     public void closeApplication() {
         Platform.exit();
         System.exit(0);
     }
 
-    /* Method to display server bean */
-    public synchronized void addAsServer(Message msg) {
-        Task<HBox> task = new Task<HBox>() {
-            @Override
-            public HBox call() throws Exception {
-                BubbledLabel bl6 = new BubbledLabel();
-                bl6.setText(msg.getMsg());
-                bl6.setBackground(new Background(new BackgroundFill(Color.ALICEBLUE,
-                        null, null)));
-                HBox x = new HBox();
-                bl6.setBubbleSpec(BubbleSpec.FACE_BOTTOM);
-                x.setAlignment(Pos.CENTER);
-                x.getChildren().addAll(bl6);
-                return x;
-            }
-        };
-        task.setOnSucceeded(event -> {
-            chatPane.getItems().add(task.getValue());
-        });
-
-        Thread t = new Thread(task);
-        t.setDaemon(true);
-        t.start();
-    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
