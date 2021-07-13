@@ -1,37 +1,33 @@
 package com.monkey1024.bean;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-/*
-    消息
- */
 public class Message implements Serializable {
-    private static final long serialVersionUID = 1;
+
     private String name;
     private MessageType type;
     private String msg;
-    private List<User> userList;
-    private byte[] voiceMsg;
-    private String picture;
+    private int count;
+    private ArrayList<User> list;
+    private ArrayList<User> users;
+
+    private Status status;
 
     public byte[] getVoiceMsg() {
         return voiceMsg;
     }
 
+    private byte[] voiceMsg;
+
     public String getPicture() {
         return picture;
     }
 
+    private String picture;
+
     public Message() {
-    }
-
-    public List<User> getUserList() {
-        return userList;
-    }
-
-    public void setUserList(List<User> userList) {
-        this.userList = userList;
     }
 
     public String getName() {
@@ -59,9 +55,41 @@ public class Message implements Serializable {
         this.type = type;
     }
 
+    public ArrayList<User> getUserlist() {
+        return list;
+    }
+
+    public void setUserlist(HashMap<String, User> userList) {
+        this.list = new ArrayList<>(userList.values());
+    }
+
+    public void setOnlineCount(int count){
+        this.count = count;
+    }
+
+    public int getOnlineCount(){
+        return this.count;
+    }
 
     public void setPicture(String picture) {
         this.picture = picture;
+    }
+
+
+    public ArrayList<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(ArrayList<User> users) {
+        this.users = users;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public Status getStatus() {
+        return status;
     }
 
     public void setVoiceMsg(byte[] voiceMsg) {
