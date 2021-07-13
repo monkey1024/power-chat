@@ -1,3 +1,4 @@
+/*
 package com.monkey1024.server;
 
 import com.monkey1024.bean.Message;
@@ -67,49 +68,60 @@ public class Handler implements Runnable {
         }
     }
 
-    /*
+    */
+/*
         检查用户名是否重复
-     */
+     *//*
+
     private synchronized void checkDuplicateUsername(Message message) throws DuplicateUsernameException {
         if (!Server.names.containsKey(message.getName())) {
             this.name = message.getName();
             user = new User(message.getName(),message.getPicture());
             //将user对象加入到集合中
             Server.names.put(name, user);
+            message.setUsers((ArrayList<User>) Server.names.values());
+            System.out.println(message.getUsers());
             System.out.println(name + "已加入群聊");
         } else {
             throw new DuplicateUsernameException(message.getName() + " 用户名重复");
         }
     }
 
-    /*
+    */
+/*
         发送通知消息
-     */
+     *//*
+
     private Message sendNotification(Message message) throws IOException {
         Message msg = new Message();
         msg.setMsg("开始聊天啦");
         msg.setType(MessageType.NOTIFICATION);
         msg.setName(message.getName());
+        msg.setPicture(message.getPicture());
         write(msg,outputStream);
         return msg;
     }
 
-    /*
+    */
+/*
         从列表中移除退出的用户
-     */
+     *//*
+
     private Message removeFromList() throws IOException {
         Message msg = new Message();
         msg.setMsg("has left the chat.");
         msg.setType(MessageType.DISCONNECTED);
         msg.setName("SERVER");
-        msg.setUserList(new ArrayList<>(Server.names.values()));
+        //msg.setUserList(new ArrayList<>(Server.names.values()));
         write(msg,outputStream);
         return msg;
     }
 
-    /*
+    */
+/*
         新登录的用户进行连接
-     */
+     *//*
+
     private Message addToList() throws IOException {
         Message msg = new Message();
         msg.setMsg("欢迎来到聊天室");
@@ -120,14 +132,17 @@ public class Handler implements Runnable {
     }
 
     private void write(Message msg,ObjectOutputStream writer) throws IOException {
-            msg.setUserList(new ArrayList<>(Server.names.values()));
+            msg.setUsers((ArrayList<User>)Server.names.values());
+            msg.setOnlineCount(msg.getUsers().size());
             writer.writeObject(msg);
             writer.reset();
     }
 
-    /*
+    */
+/*
         退出
-     */
+     *//*
+
     private synchronized void closeConnections()  {
         if (name != null) {
             Server.names.remove(name);
@@ -161,3 +176,4 @@ public class Handler implements Runnable {
         }
     }
 }
+*/
