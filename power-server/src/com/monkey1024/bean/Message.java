@@ -9,12 +9,9 @@ public class Message implements Serializable {
     private MessageType type;
     private String msg;
     private int count;
-
     //在线用户
     private ArrayList<User> onlineUsers;
     private ArrayList<User> users;
-
-    private Status status;
 
     public byte[] getVoiceMsg() {
         return voiceMsg;
@@ -76,21 +73,12 @@ public class Message implements Serializable {
         this.picture = picture;
     }
 
-
     public ArrayList<User> getUsers() {
         return users;
     }
 
     public void setUsers(ArrayList<User> users) {
         this.users = users;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
-    public Status getStatus() {
-        return status;
     }
 
     public void setVoiceMsg(byte[] voiceMsg) {

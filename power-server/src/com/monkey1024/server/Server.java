@@ -75,9 +75,6 @@ public class Server {
                             case CONNECTED:
                                 addToList();
                                 break;
-                            case STATUS:
-                                changeStatus(inputmsg);
-                                break;
                         }
                     }
                 }
@@ -87,16 +84,6 @@ public class Server {
             } finally {
                 closeConnections();
             }
-        }
-
-        private Message changeStatus(Message inputmsg) throws IOException {
-            Message msg = new Message();
-            msg.setName(user.getName());
-            msg.setType(MessageType.STATUS);
-            msg.setMsg("");
-            User userObj = names.get(name);
-            write(msg);
-            return msg;
         }
 
         private synchronized void checkDuplicateUsername(Message firstMessage) throws DuplicateUsernameException {
