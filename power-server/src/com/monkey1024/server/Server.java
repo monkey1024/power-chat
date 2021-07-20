@@ -116,7 +116,7 @@ public class Server {
 
         private Message sendNotification(Message firstMessage) throws IOException {
             Message msg = new Message();
-            msg.setMsg("has joined the chat.");
+            msg.setMsg("加入群聊");
             msg.setType(MessageType.NOTIFICATION);
             msg.setName(firstMessage.getName());
             msg.setPicture(firstMessage.getPicture());
@@ -127,10 +127,10 @@ public class Server {
 
         private Message removeFromList() throws IOException {
             Message msg = new Message();
-            msg.setMsg("has left the chat.");
+            msg.setMsg("离开了聊天");
             msg.setType(MessageType.DISCONNECTED);
             msg.setName("SERVER");
-            msg.setUserlist(names);
+            msg.setOnlineUsers(new ArrayList<>(names.values()));
             write(msg);
             return msg;
         }
@@ -140,7 +140,7 @@ public class Server {
          */
         private Message addToList() throws IOException {
             Message msg = new Message();
-            msg.setMsg("Welcome, You have now joined the server! Enjoy chatting!");
+            msg.setMsg("欢迎加入聊天");
             msg.setType(MessageType.CONNECTED);
             msg.setName("SERVER");
             write(msg);
@@ -152,7 +152,7 @@ public class Server {
          */
         private void write(Message msg) throws IOException {
             for (ObjectOutputStream writer : writers) {
-                msg.setUserlist(names);
+                msg.setOnlineUsers(new ArrayList<>(names.values()));
                 msg.setUsers(users);
                 msg.setOnlineCount(names.size());
                 writer.writeObject(msg);

@@ -84,17 +84,19 @@ public class Listener implements Runnable{
         }
     }
 
-    /* This method is used for sending a normal Message
-     * @param msg - The message which the user generates
+    /**
+     * 发送文字消息
+     * @param msg
+     * @throws IOException
      */
     public static void send(String msg) throws IOException {
-        Message createMessage = new Message();
-        createMessage.setName(username);
-        createMessage.setType(MessageType.USER);
-        createMessage.setStatus(Status.AWAY);
-        createMessage.setMsg(msg);
-        createMessage.setPicture(picture);
-        oos.writeObject(createMessage);
+        Message newMsg = new Message();
+        newMsg.setName(username);
+        newMsg.setType(MessageType.USER);
+        newMsg.setStatus(Status.AWAY);
+        newMsg.setMsg(msg);
+        newMsg.setPicture(picture);
+        oos.writeObject(newMsg);
         oos.flush();
     }
 

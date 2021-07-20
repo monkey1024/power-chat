@@ -45,13 +45,11 @@ public class ChatController implements Initializable {
     @FXML private TextArea messageBox;
     @FXML private Label usernameLabel;
     @FXML private Label onlineCountLabel;
-    @FXML private ListView userList;
+    @FXML private ListView userList;//在线用户
     @FXML private ImageView userImageView;
     @FXML private Button recordBtn;
     @FXML ListView chatPane;
-    @FXML ListView statusList;
     @FXML BorderPane borderPane;
-    @FXML ComboBox statusComboBox;
     @FXML ImageView microphoneImageView;
 
     Image microphoneActiveImage = new Image(getClass().getClassLoader().getResource("images/microphone-active.png").toString());
@@ -61,6 +59,10 @@ public class ChatController implements Initializable {
     private double yOffset;
 
 
+    /**
+     * 处理发送按钮点击事件
+     * @throws IOException
+     */
     public void sendButtonAction() throws IOException {
         String msg = messageBox.getText();
         if (!messageBox.getText().isEmpty()) {
@@ -69,12 +71,9 @@ public class ChatController implements Initializable {
         }
     }
 
-    public void recordVoiceMessage() throws IOException {
+    public void recordVoiceMessage() {
         if (VoiceUtil.isRecording()) {
-            Platform.runLater(() -> {
-                microphoneImageView.setImage(microphoneInactiveImage);
-                    }
-            );
+            Platform.runLater(() -> microphoneImageView.setImage(microphoneInactiveImage));
             VoiceUtil.setRecording(false);
         } else {
             Platform.runLater(() -> {
@@ -174,7 +173,7 @@ public class ChatController implements Initializable {
             ObservableList<User> users = FXCollections.observableList(msg.getUsers());
             userList.setItems(users);
             userList.setCellFactory(new CellRenderer());
-            setOnlineLabel(String.valueOf(msg.getUserlist().size()));
+            setOnlineLabel(String.valueOf(msg.getOnlineUsers().size()));
         });
     }
 
@@ -261,15 +260,6 @@ public class ChatController implements Initializable {
             borderPane.setCursor(Cursor.DEFAULT);
         });
 
-//        statusComboBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-//            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-//                try {
-//                    Listener.sendStatusUpdate(Status.valueOf(newValue.toUpperCase()));
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
 
         /* Added to prevent the enter from adding a new line to inputMessageBox */
         messageBox.addEventFilter(KeyEvent.KEY_PRESSED, ke -> {

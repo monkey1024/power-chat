@@ -2,7 +2,6 @@ package com.monkey1024.bean;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Message implements Serializable {
 
@@ -10,7 +9,9 @@ public class Message implements Serializable {
     private MessageType type;
     private String msg;
     private int count;
-    private ArrayList<User> list;
+
+    //在线用户
+    private ArrayList<User> onlineUsers;
     private ArrayList<User> users;
 
     private Status status;
@@ -55,12 +56,12 @@ public class Message implements Serializable {
         this.type = type;
     }
 
-    public ArrayList<User> getUserlist() {
-        return list;
+    public ArrayList<User> getOnlineUsers() {
+        return onlineUsers;
     }
 
-    public void setUserlist(HashMap<String, User> userList) {
-        this.list = new ArrayList<>(userList.values());
+    public void setOnlineUsers(ArrayList<User> onlineUsers) {
+        this.onlineUsers = onlineUsers;
     }
 
     public void setOnlineCount(int count){
