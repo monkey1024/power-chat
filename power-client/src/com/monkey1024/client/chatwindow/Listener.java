@@ -1,91 +1,73 @@
 package com.monkey1024.client.chatwindow;
 
-
-
 import com.monkey1024.bean.Message;
 import com.monkey1024.bean.MessageType;
-import com.monkey1024.bean.Status;
 import com.monkey1024.client.login.LoginController;
 
 import java.io.*;
 import java.net.Socket;
 
 
-public class Listener implements Runnable{
-
-    private static final String HASCONNECTED = "has connected";
+public class Listener implements Runnable {
 
     private static String picture;
     private Socket socket;
     public String hostname;
     public int port;
     public static String username;
-    public ChatController controller;
+    public ChatController chatController;
     private static ObjectOutputStream oos;
-    private InputStream is;
-    private ObjectInputStream input;
+    private InputStream inputStream;
+    private ObjectInputStream ois;
     private OutputStream outputStream;
 
-    public Listener(String hostname, int port, String username, String picture, ChatController controller) {
+    public Listener(String hostname, int port, String username, String picture, ChatController chatController) {
         this.hostname = hostname;
         this.port = port;
         Listener.username = username;
         Listener.picture = picture;
-        this.controller = controller;
+        this.chatController = chatController;
     }
 
     public void run() {
         try {
+            //获取io对象
             socket = new Socket(hostname, port);
             LoginController.getInstance().showScene();
             outputStream = socket.getOutputStream();
             oos = new ObjectOutputStream(outputStream);
-            is = socket.getInputStream();
-            input = new ObjectInputStream(is);
-        } catch (IOException e) {
-            LoginController.getInstance().showErrorDialog("Could not connect to server");
-        }
+            inputStream = socket.getInputStream();
+            ois = new ObjectInputStream(inputStream);
 
-        try {
             connect();
             while (socket.isConnected()) {
                 Message message = null;
-                message = (Message) input.readObject();
+                message = (Message) ois.readObject();
 
                 if (message != null) {
                     switch (message.getType()) {
                         case USER:
-                            controller.addToChat(message);
-                            break;
                         case VOICE:
-                            controller.addToChat(message);
+                            chatController.showMsg(message);
                             break;
                         case NOTIFICATION:
-                            controller.newUserNotification(message);
-                            break;
-                        case SERVER:
-                            controller.addAsServer(message);
+                            chatController.newUserNotification(message);
                             break;
                         case CONNECTED:
-                            controller.setUserList(message);
-                            break;
                         case DISCONNECTED:
-                            controller.setUserList(message);
-                            break;
-                        case STATUS:
-                            controller.setUserList(message);
+                            chatController.setUserList(message);
                             break;
                     }
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
-            controller.logoutScene();
         }
     }
 
     /**
      * 发送文字消息
+     *
      * @param msg
      * @throws IOException
      */
@@ -93,48 +75,38 @@ public class Listener implements Runnable{
         Message newMsg = new Message();
         newMsg.setName(username);
         newMsg.setType(MessageType.USER);
-        newMsg.setStatus(Status.AWAY);
         newMsg.setMsg(msg);
         newMsg.setPicture(picture);
         oos.writeObject(newMsg);
         oos.flush();
     }
 
-    /* This method is used for sending a voice Message
- * @param msg - The message which the user generates
- */
+    /**
+     *  发送语音消息
+     * @param audio
+     * @throws IOException
+     */
     public static void sendVoiceMessage(byte[] audio) throws IOException {
-        Message createMessage = new Message();
-        createMessage.setName(username);
-        createMessage.setType(MessageType.VOICE);
-        createMessage.setStatus(Status.AWAY);
-        createMessage.setVoiceMsg(audio);
-        createMessage.setPicture(picture);
-        oos.writeObject(createMessage);
+        Message newMsg = new Message();
+        newMsg.setName(username);
+        newMsg.setType(MessageType.VOICE);
+        newMsg.setVoiceMsg(audio);
+        newMsg.setPicture(picture);
+        oos.writeObject(newMsg);
         oos.flush();
     }
 
-    /* This method is used for sending a normal Message
- * @param msg - The message which the user generates
- */
-    public static void sendStatusUpdate(Status status) throws IOException {
-        Message createMessage = new Message();
-        createMessage.setName(username);
-        createMessage.setType(MessageType.STATUS);
-        createMessage.setStatus(status);
-        createMessage.setPicture(picture);
-        oos.writeObject(createMessage);
-        oos.flush();
-    }
-
-    /* This method is used to send a connecting message */
+    /**
+     *  连接
+     * @throws IOException
+     */
     public static void connect() throws IOException {
-        Message createMessage = new Message();
-        createMessage.setName(username);
-        createMessage.setType(MessageType.CONNECTED);
-        createMessage.setMsg(HASCONNECTED);
-        createMessage.setPicture(picture);
-        oos.writeObject(createMessage);
+        Message newMsg = new Message();
+        newMsg.setName(username);
+        newMsg.setType(MessageType.CONNECTED);
+        newMsg.setMsg("已连接");
+        newMsg.setPicture(picture);
+        oos.writeObject(newMsg);
     }
 
 }
