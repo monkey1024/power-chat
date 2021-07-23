@@ -215,6 +215,9 @@ public class LoginController implements Initializable {
         System.exit(0);
     }
 
+    /**
+     * 最小化
+     */
     public void minimizeWindow(){
         MainLauncher.getPrimaryStage().setIconified(true);
     }

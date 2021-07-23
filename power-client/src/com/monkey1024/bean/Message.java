@@ -5,13 +5,14 @@ import java.util.ArrayList;
 
 public class Message implements Serializable {
 
+    //用户名
     private String name;
+    //消息类型
     private MessageType type;
+    //消息内容
     private String msg;
-    private int count;
     //在线用户
     private ArrayList<User> onlineUsers;
-    private ArrayList<User> users;
 
     public byte[] getVoiceMsg() {
         return voiceMsg;
@@ -61,25 +62,11 @@ public class Message implements Serializable {
         this.onlineUsers = onlineUsers;
     }
 
-    public void setOnlineCount(int count){
-        this.count = count;
-    }
-
-    public int getOnlineCount(){
-        return this.count;
-    }
 
     public void setPicture(String picture) {
         this.picture = picture;
     }
 
-    public ArrayList<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(ArrayList<User> users) {
-        this.users = users;
-    }
 
     public void setVoiceMsg(byte[] voiceMsg) {
         this.voiceMsg = voiceMsg;

@@ -8,10 +8,8 @@ public class Message implements Serializable {
     private String name;
     private MessageType type;
     private String msg;
-    private int count;
     //在线用户
     private ArrayList<User> onlineUsers;
-    private ArrayList<User> users;
 
     public byte[] getVoiceMsg() {
         return voiceMsg;
@@ -61,24 +59,8 @@ public class Message implements Serializable {
         this.onlineUsers = onlineUsers;
     }
 
-    public void setOnlineCount(int count){
-        this.count = count;
-    }
-
-    public int getOnlineCount(){
-        return this.count;
-    }
-
     public void setPicture(String picture) {
         this.picture = picture;
-    }
-
-    public ArrayList<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(ArrayList<User> users) {
-        this.users = users;
     }
 
     public void setVoiceMsg(byte[] voiceMsg) {

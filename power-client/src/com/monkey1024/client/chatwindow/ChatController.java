@@ -35,10 +35,10 @@ import java.util.ResourceBundle;
 public class ChatController implements Initializable {
 
     @FXML private TextArea messageBox;
-    @FXML private Label usernameLabel;
-    @FXML private Label onlineCountLabel;
+    @FXML private Label usernameLabel;//显示的用户名
+    @FXML private Label onlineCountLabel;//显示在线用户总数
     @FXML private ListView userList;//在线用户
-    @FXML private ImageView userImageView;
+    @FXML private ImageView userImageView;//头像
     @FXML private Button recordBtn;
     @FXML ListView chatPane;
     @FXML BorderPane borderPane;
@@ -102,7 +102,7 @@ public class ChatController implements Initializable {
                 HBox x = new HBox();
                 bl6.setBubbleSpec(BubbleSpec.FACE_LEFT_CENTER);
                 x.getChildren().addAll(profileImage, bl6);
-                setOnlineLabel(Integer.toString(msg.getOnlineCount()));
+                setOnlineLabel(String.valueOf(msg.getOnlineUsers().size()));
                 return x;
             }
         };
@@ -136,7 +136,7 @@ public class ChatController implements Initializable {
                 bl6.setBubbleSpec(BubbleSpec.FACE_RIGHT_CENTER);
                 x.getChildren().addAll(bl6, profileImage);
 
-                setOnlineLabel(Integer.toString(msg.getOnlineCount()));
+                setOnlineLabel(String.valueOf(msg.getOnlineUsers().size()));
                 return x;
             }
         };
@@ -163,7 +163,7 @@ public class ChatController implements Initializable {
 
     public void setUserList(Message msg) {
         Platform.runLater(() -> {
-            ObservableList<User> users = FXCollections.observableList(msg.getUsers());
+            ObservableList<User> users = FXCollections.observableList(msg.getOnlineUsers());
             userList.setItems(users);
             userList.setCellFactory(new CellRenderer());
             setOnlineLabel(String.valueOf(msg.getOnlineUsers().size()));

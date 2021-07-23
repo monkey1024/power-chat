@@ -134,14 +134,14 @@ public class Server {
             return msg;
         }
 
-        /*
-         * Creates and sends a Message type to the listeners.
+        /**
+         * 向监听器发送消息
+         * @param msg
+         * @throws IOException
          */
         private void write(Message msg) throws IOException {
             for (ObjectOutputStream writer : writers) {
                 msg.setOnlineUsers(new ArrayList<>(names.values()));
-                msg.setUsers(users);
-                msg.setOnlineCount(names.size());
                 writer.writeObject(msg);
                 writer.reset();
             }
