@@ -17,9 +17,9 @@ public class Server {
 
     /* Setting up variables */
     private static final int PORT = 9001;
-    private static final HashMap<String, User> names = new HashMap<>();
-    private static HashSet<ObjectOutputStream> writers = new HashSet<>();
-    private static ArrayList<User> users = new ArrayList<>();
+    public static final HashMap<String, User> names = new HashMap<>();
+    public static HashSet<ObjectOutputStream> writers = new HashSet<>();
+    public static ArrayList<User> users = new ArrayList<>();
 
     public static void main(String[] args) throws Exception {
         ServerSocket listener = new ServerSocket(PORT);
@@ -67,9 +67,6 @@ public class Server {
                     if (inputmsg != null) {
                         switch (inputmsg.getType()) {
                             case USER:
-                                write(inputmsg);
-                                break;
-                            case VOICE:
                                 write(inputmsg);
                                 break;
                             case CONNECTED:

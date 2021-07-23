@@ -41,13 +41,11 @@ public class Listener implements Runnable {
 
             connect();
             while (socket.isConnected()) {
-                Message message = null;
-                message = (Message) ois.readObject();
+                Message message = (Message) ois.readObject();
 
                 if (message != null) {
                     switch (message.getType()) {
                         case USER:
-                        case VOICE:
                             chatController.showMsg(message);
                             break;
                         case NOTIFICATION:
@@ -76,21 +74,6 @@ public class Listener implements Runnable {
         newMsg.setName(username);
         newMsg.setType(MessageType.USER);
         newMsg.setMsg(msg);
-        newMsg.setPicture(picture);
-        oos.writeObject(newMsg);
-        oos.flush();
-    }
-
-    /**
-     *  发送语音消息
-     * @param audio
-     * @throws IOException
-     */
-    public static void sendVoiceMessage(byte[] audio) throws IOException {
-        Message newMsg = new Message();
-        newMsg.setName(username);
-        newMsg.setType(MessageType.VOICE);
-        newMsg.setVoiceMsg(audio);
         newMsg.setPicture(picture);
         oos.writeObject(newMsg);
         oos.flush();

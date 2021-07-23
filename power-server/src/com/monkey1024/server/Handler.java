@@ -1,4 +1,3 @@
-/*
 package com.monkey1024.server;
 
 import com.monkey1024.bean.Message;
@@ -15,41 +14,34 @@ public class Handler implements Runnable {
     private String name;
     private Socket socket;
     private User user;
-    private ObjectInputStream inputStream;
+    private ObjectInputStream input;
     private OutputStream os;
-    private ObjectOutputStream outputStream;
+    private ObjectOutputStream output;
     private InputStream is;
 
     public Handler(Socket socket) throws IOException {
         this.socket = socket;
     }
-    
-    @Override
+
     public void run() {
         try {
-            //获取输入流
             is = socket.getInputStream();
-            inputStream = new ObjectInputStream(is);
-
-            //获取输出流
+            input = new ObjectInputStream(is);
             os = socket.getOutputStream();
-            outputStream = new ObjectOutputStream(os);
+            output = new ObjectOutputStream(os);
 
-            //读取客户端传入的数据
-            Message firstMessage = (Message) inputStream.readObject();
+            Message firstMessage = (Message) input.readObject();
             checkDuplicateUsername(firstMessage);
-
+            Server.writers.add(output);
             sendNotification(firstMessage);
             addToList();
 
             while (socket.isConnected()) {
-                Message message = (Message) inputStream.readObject();
-                if (message != null) {
-                    System.out.println(message.getType() +  "-"  + message.getName() + ":" + message.getMsg());
-                    switch (message.getType()) {
+                Message inputmsg = (Message) input.readObject();
+                if (inputmsg != null) {
+                    switch (inputmsg.getType()) {
                         case USER:
-                        case VOICE:
-                            write(message,outputStream);
+                            write(inputmsg);
                             break;
                         case CONNECTED:
                             addToList();
@@ -57,97 +49,88 @@ public class Handler implements Runnable {
                     }
                 }
             }
-        } catch (SocketException e) {
-            e.printStackTrace();
-        } catch (DuplicateUsernameException e){
-            e.printStackTrace();
+        } catch (SocketException socketException) {
+        } catch (DuplicateUsernameException duplicateException){
         } catch (Exception e){
-            e.printStackTrace();
         } finally {
             closeConnections();
         }
     }
 
-    */
-/*
-        检查用户名是否重复
-     *//*
+    private synchronized void checkDuplicateUsername(Message firstMessage) throws DuplicateUsernameException {
+        if (!Server.names.containsKey(firstMessage.getName())) {
+            this.name = firstMessage.getName();
+            user = new User();
+            user.setName(firstMessage.getName());
+            user.setPicture(firstMessage.getPicture());
 
-    private synchronized void checkDuplicateUsername(Message message) throws DuplicateUsernameException {
-        if (!Server.names.containsKey(message.getName())) {
-            this.name = message.getName();
-            user = new User(message.getName(),message.getPicture());
-            //将user对象加入到集合中
+            //users.add(user);
             Server.names.put(name, user);
-            message.setUsers((ArrayList<User>) Server.names.values());
-            System.out.println(message.getUsers());
-            System.out.println(name + "已加入群聊");
+
         } else {
-            throw new DuplicateUsernameException(message.getName() + " 用户名重复");
+            throw new DuplicateUsernameException(firstMessage.getName() + " is already connected");
         }
     }
 
-    */
-/*
-        发送通知消息
-     *//*
-
-    private Message sendNotification(Message message) throws IOException {
+    private Message sendNotification(Message firstMessage) throws IOException {
         Message msg = new Message();
-        msg.setMsg("开始聊天啦");
+        msg.setMsg("加入群聊");
         msg.setType(MessageType.NOTIFICATION);
-        msg.setName(message.getName());
-        msg.setPicture(message.getPicture());
-        write(msg,outputStream);
+        msg.setName(firstMessage.getName());
+        msg.setPicture(firstMessage.getPicture());
+        write(msg);
         return msg;
     }
 
-    */
-/*
-        从列表中移除退出的用户
-     *//*
 
     private Message removeFromList() throws IOException {
         Message msg = new Message();
-        msg.setMsg("has left the chat.");
+        msg.setMsg("离开了聊天");
         msg.setType(MessageType.DISCONNECTED);
         msg.setName("SERVER");
-        //msg.setUserList(new ArrayList<>(Server.names.values()));
-        write(msg,outputStream);
+        msg.setOnlineUsers(new ArrayList<>(Server.names.values()));
+        write(msg);
         return msg;
     }
 
-    */
-/*
-        新登录的用户进行连接
-     *//*
-
+    /*
+     * For displaying that a user has joined the server
+     */
     private Message addToList() throws IOException {
         Message msg = new Message();
-        msg.setMsg("欢迎来到聊天室");
+        msg.setMsg("欢迎加入聊天");
         msg.setType(MessageType.CONNECTED);
         msg.setName("SERVER");
-        write(msg,outputStream);
+        write(msg);
         return msg;
     }
 
-    private void write(Message msg,ObjectOutputStream writer) throws IOException {
-            msg.setUsers((ArrayList<User>)Server.names.values());
-            msg.setOnlineCount(msg.getUsers().size());
+    /**
+     * 向监听器发送消息
+     * @param msg
+     * @throws IOException
+     */
+    private void write(Message msg) throws IOException {
+        for (ObjectOutputStream writer : Server.writers) {
+            msg.setOnlineUsers(new ArrayList<>(Server.names.values()));
             writer.writeObject(msg);
             writer.reset();
+        }
     }
 
-    */
-/*
-        退出
-     *//*
-
+    /*
+     * Once a user has been disconnected, we close the open connections and remove the writers
+     */
     private synchronized void closeConnections()  {
         if (name != null) {
             Server.names.remove(name);
         }
-
+        if (user != null){
+            Server.users.remove(user);
+        }
+        if (output != null){
+            Server.writers.remove(output);
+        }
         if (is != null){
             try {
                 is.close();
@@ -162,9 +145,9 @@ public class Handler implements Runnable {
                 e.printStackTrace();
             }
         }
-        if (inputStream != null){
+        if (input != null){
             try {
-                inputStream.close();
+                input.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -176,4 +159,4 @@ public class Handler implements Runnable {
         }
     }
 }
-*/
+

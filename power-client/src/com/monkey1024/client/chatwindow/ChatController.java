@@ -1,11 +1,11 @@
 package com.monkey1024.client.chatwindow;
 
 import com.monkey1024.bean.Message;
-import com.monkey1024.bean.MessageType;
 import com.monkey1024.bean.User;
 import com.monkey1024.bean.bubble.BubbleSpec;
 import com.monkey1024.bean.bubble.BubbledLabel;
-import com.monkey1024.client.util.*;
+import com.monkey1024.client.util.Drag;
+import com.monkey1024.client.util.ThreadPoolUtil;
 import com.monkey1024.traynotifications.animations.AnimationType;
 import com.monkey1024.traynotifications.notification.TrayNotification;
 import javafx.application.Platform;
@@ -15,12 +15,17 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
@@ -39,15 +44,8 @@ public class ChatController implements Initializable {
     @FXML private Label onlineCountLabel;//显示在线用户总数
     @FXML private ListView userList;//在线用户
     @FXML private ImageView userImageView;//头像
-    @FXML private Button recordBtn;
     @FXML ListView chatPane;
     @FXML BorderPane borderPane;
-    @FXML ImageView microphoneImageView;
-
-    //语音图标
-    Image microphoneActiveImage = new Image(getClass().getClassLoader().getResource("images/microphone-active.png").toString());
-    Image microphoneInactiveImage = new Image(getClass().getClassLoader().getResource("images/microphone.png").toString());
-
 
     /**
      * 处理发送按钮点击事件
@@ -61,19 +59,6 @@ public class ChatController implements Initializable {
         }
     }
 
-    /**
-     *  录制语音消息
-     */
-    public void recordVoiceMessage() {
-        //判断是否在录制中从而显示不同的录制图标
-        if (VoiceUtil.isRecording()) {
-            Platform.runLater(() -> microphoneImageView.setImage(microphoneInactiveImage));
-            VoiceUtil.setRecording(false);
-        } else {
-            Platform.runLater(() -> microphoneImageView.setImage(microphoneActiveImage));
-            VoiceRecorder.captureAudio();
-        }
-    }
 
     /**
      *  显示发送的消息
@@ -90,14 +75,7 @@ public class ChatController implements Initializable {
                 profileImage.setFitHeight(32);
                 profileImage.setFitWidth(32);
                 BubbledLabel bl6 = new BubbledLabel();
-                if (msg.getType() == MessageType.VOICE){
-                    ImageView imageview = new ImageView(new Image(getClass().getClassLoader().getResource("images/sound.png").toString()));
-                    bl6.setGraphic(imageview);
-                    bl6.setText("语音消息");
-                    VoicePlayback.playAudio(msg.getVoiceMsg());
-                }else {
-                    bl6.setText(msg.getName() + ": " + msg.getMsg());
-                }
+                bl6.setText(msg.getName() + ": " + msg.getMsg());
                 bl6.setBackground(new Background(new BackgroundFill(Color.WHITE,null, null)));
                 HBox x = new HBox();
                 bl6.setBubbleSpec(BubbleSpec.FACE_LEFT_CENTER);
@@ -121,13 +99,7 @@ public class ChatController implements Initializable {
                 profileImage.setFitWidth(32);
 
                 BubbledLabel bl6 = new BubbledLabel();
-                if (msg.getType() == MessageType.VOICE){
-                    bl6.setGraphic(new ImageView(new Image(getClass().getClassLoader().getResource("images/sound.png").toString())));
-                    bl6.setText("语音消息");
-                    VoicePlayback.playAudio(msg.getVoiceMsg());
-                }else {
-                    bl6.setText(msg.getMsg());
-                }
+                bl6.setText(msg.getMsg());
                 bl6.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN,
                         null, null)));
                 HBox x = new HBox();
@@ -153,7 +125,7 @@ public class ChatController implements Initializable {
         this.usernameLabel.setText(username);
     }
 
-    public void setImageLabel() throws IOException {
+    public void setImageLabel() {
         this.userImageView.setImage(new Image(getClass().getClassLoader().getResource("images/dominic.png").toString()));
     }
 
@@ -209,11 +181,8 @@ public class ChatController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        try {
-            setImageLabel();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        setImageLabel();
+
         //处理鼠标拖拽界面
         new Drag().handleDrag(borderPane);
 
