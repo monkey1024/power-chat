@@ -11,102 +11,106 @@ import java.net.SocketException;
 import java.util.ArrayList;
 
 public class Handler implements Runnable {
-    private String name;
     private Socket socket;
     private User user;
-    private ObjectInputStream input;
-    private OutputStream os;
-    private ObjectOutputStream output;
-    private InputStream is;
+    private ObjectInputStream objectInputStream;
+    private OutputStream outputStream;
+    private ObjectOutputStream objectOutputStream;
+    private InputStream inputStream;
 
-    public Handler(Socket socket) throws IOException {
+    public Handler(Socket socket) {
         this.socket = socket;
     }
 
     public void run() {
         try {
-            is = socket.getInputStream();
-            input = new ObjectInputStream(is);
-            os = socket.getOutputStream();
-            output = new ObjectOutputStream(os);
+            inputStream = socket.getInputStream();
+            objectInputStream = new ObjectInputStream(inputStream);
+            outputStream = socket.getOutputStream();
+            objectOutputStream = new ObjectOutputStream(outputStream);
 
-            Message firstMessage = (Message) input.readObject();
+
+            Message firstMessage = (Message) objectInputStream.readObject();
             checkDuplicateUsername(firstMessage);
-            Server.writers.add(output);
+            Server.writers.add(objectOutputStream);
             sendNotification(firstMessage);
             addToList();
 
             while (socket.isConnected()) {
-                Message inputmsg = (Message) input.readObject();
-                if (inputmsg != null) {
-                    switch (inputmsg.getType()) {
-                        case USER:
-                            write(inputmsg);
+                Message message = (Message) objectInputStream.readObject();
+                if (message != null) {
+                    switch (message.getType()) {
+                        case TEXT:
+                            write(message);
                             break;
-                        case CONNECTED:
+                        case JOINED:
                             addToList();
                             break;
                     }
                 }
             }
-        } catch (SocketException socketException) {
-        } catch (DuplicateUsernameException duplicateException){
-        } catch (Exception e){
+        }catch (SocketException e) {
+        }catch (Exception e) {
+            e.printStackTrace();
         } finally {
             closeConnections();
         }
     }
 
-    private synchronized void checkDuplicateUsername(Message firstMessage) throws DuplicateUsernameException {
-        if (!Server.names.containsKey(firstMessage.getName())) {
-            this.name = firstMessage.getName();
+    /**
+     * 检查用户名是否重复
+     * @param message
+     * @throws DuplicateUsernameException
+     */
+    private synchronized void checkDuplicateUsername(Message message) throws DuplicateUsernameException {
+        if (!Server.names.containsKey(message.getName())) {
             user = new User();
-            user.setName(firstMessage.getName());
-            user.setPicture(firstMessage.getPicture());
-
-            //users.add(user);
-            Server.names.put(name, user);
+            user.setName(message.getName());
+            user.setPicture(message.getPicture());
+            Server.names.put(message.getName(), user);
 
         } else {
-            throw new DuplicateUsernameException(firstMessage.getName() + " is already connected");
+            throw new DuplicateUsernameException(message.getName() + " inputStream already connected");
         }
     }
 
-    private Message sendNotification(Message firstMessage) throws IOException {
+    private void sendNotification(Message message) throws IOException {
         Message msg = new Message();
         msg.setMsg("加入群聊");
         msg.setType(MessageType.NOTIFICATION);
-        msg.setName(firstMessage.getName());
-        msg.setPicture(firstMessage.getPicture());
+        msg.setName(message.getName());
+        msg.setPicture(message.getPicture());
         write(msg);
-        return msg;
     }
 
-
-    private Message removeFromList() throws IOException {
+    /**
+     *  退出聊天
+     * @throws IOException
+     */
+    private void removeFromList() throws IOException {
         Message msg = new Message();
         msg.setMsg("离开了聊天");
         msg.setType(MessageType.DISCONNECTED);
         msg.setName("SERVER");
         msg.setOnlineUsers(new ArrayList<>(Server.names.values()));
         write(msg);
-        return msg;
-    }
-
-    /*
-     * For displaying that a user has joined the server
-     */
-    private Message addToList() throws IOException {
-        Message msg = new Message();
-        msg.setMsg("欢迎加入聊天");
-        msg.setType(MessageType.CONNECTED);
-        msg.setName("SERVER");
-        write(msg);
-        return msg;
     }
 
     /**
-     * 向监听器发送消息
+     *  新用户加入
+     * @return
+     * @throws IOException
+     */
+    private void addToList() throws IOException {
+        Message msg = new Message();
+        msg.setMsg("欢迎加入聊天");
+        msg.setType(MessageType.JOINED);
+        msg.setName("SERVER");
+        write(msg);
+    }
+
+    /**
+     * 向客户端发送消息
      * @param msg
      * @throws IOException
      */
@@ -118,36 +122,34 @@ public class Handler implements Runnable {
         }
     }
 
-    /*
-     * Once a user has been disconnected, we close the open connections and remove the writers
+    /**
+     *  关闭链接
      */
     private synchronized void closeConnections()  {
-        if (name != null) {
-            Server.names.remove(name);
+        if (user.getName() != null) {
+            Server.names.remove(user.getName());
         }
-        if (user != null){
-            Server.users.remove(user);
+
+        if (objectOutputStream != null){
+            Server.writers.remove(objectOutputStream);
         }
-        if (output != null){
-            Server.writers.remove(output);
-        }
-        if (is != null){
+        if (inputStream != null){
             try {
-                is.close();
+                inputStream.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        if (os != null){
+        if (outputStream != null){
             try {
-                os.close();
+                outputStream.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        if (input != null){
+        if (objectInputStream != null){
             try {
-                input.close();
+                objectInputStream.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }

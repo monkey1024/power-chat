@@ -45,13 +45,13 @@ public class Listener implements Runnable {
 
                 if (message != null) {
                     switch (message.getType()) {
-                        case USER:
+                        case TEXT:
                             chatController.showMsg(message);
                             break;
                         case NOTIFICATION:
                             chatController.newUserNotification(message);
                             break;
-                        case CONNECTED:
+                        case JOINED:
                         case DISCONNECTED:
                             chatController.setUserList(message);
                             break;
@@ -72,7 +72,7 @@ public class Listener implements Runnable {
     public static void send(String msg) throws IOException {
         Message newMsg = new Message();
         newMsg.setName(username);
-        newMsg.setType(MessageType.USER);
+        newMsg.setType(MessageType.TEXT);
         newMsg.setMsg(msg);
         newMsg.setPicture(picture);
         oos.writeObject(newMsg);
@@ -86,7 +86,7 @@ public class Listener implements Runnable {
     public static void connect() throws IOException {
         Message newMsg = new Message();
         newMsg.setName(username);
-        newMsg.setType(MessageType.CONNECTED);
+        newMsg.setType(MessageType.JOINED);
         newMsg.setMsg("已连接");
         newMsg.setPicture(picture);
         oos.writeObject(newMsg);
