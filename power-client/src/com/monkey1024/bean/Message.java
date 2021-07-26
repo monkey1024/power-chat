@@ -14,12 +14,6 @@ public class Message implements Serializable {
     //在线用户
     private ArrayList<User> onlineUsers;
 
-    public byte[] getVoiceMsg() {
-        return voiceMsg;
-    }
-
-    private byte[] voiceMsg;
-
     public String getPicture() {
         return picture;
     }
@@ -68,7 +62,4 @@ public class Message implements Serializable {
     }
 
 
-    public void setVoiceMsg(byte[] voiceMsg) {
-        this.voiceMsg = voiceMsg;
-    }
 }

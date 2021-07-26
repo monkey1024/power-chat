@@ -50,6 +50,7 @@ public class Handler implements Runnable {
                 }
             }
         }catch (SocketException e) {
+            e.printStackTrace();
         }catch (Exception e) {
             e.printStackTrace();
         } finally {

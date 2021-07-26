@@ -44,14 +44,14 @@
                         <Image url="@../images/default.png" />
                      </image>
                   </ImageView>
-                  <ImageView fx:id="Sarahview" fitHeight="93.0" fitWidth="124.0" pickOnBounds="true" preserveRatio="true" visible="false">
+                  <ImageView fx:id="girlView" fitHeight="93.0" fitWidth="124.0" pickOnBounds="true" preserveRatio="true" visible="false">
                      <image>
-                        <Image preserveRatio="false" smooth="false" url="@../images/sarah.png" />
+                        <Image preserveRatio="false" smooth="false" url="@../images/girl.png" />
                      </image>
                   </ImageView>
-                  <ImageView fx:id="Dominicview" fitHeight="93.0" fitWidth="124.0" pickOnBounds="true" preserveRatio="true" visible="false">
+                  <ImageView fx:id="boyView" fitHeight="93.0" fitWidth="124.0" pickOnBounds="true" preserveRatio="true" visible="false">
                      <image>
-                        <Image preserveRatio="false" smooth="true" url="@../images/dominic.png" />
+                        <Image preserveRatio="false" smooth="true" url="@../images/boy.png" />
                      </image>
                   </ImageView>
                </children>
@@ -59,9 +59,9 @@
             <ChoiceBox fx:id="imagePicker" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                <items>
                   <FXCollections fx:factory="observableArrayList">
-                     <String fx:value="Default" />
-                     <String fx:value="Dominic" />
-                     <String fx:value="Sarah" />
+                     <String fx:value="default" />
+                     <String fx:value="girl" />
+                     <String fx:value="boy" />
                   </FXCollections>
                </items>
             </ChoiceBox>

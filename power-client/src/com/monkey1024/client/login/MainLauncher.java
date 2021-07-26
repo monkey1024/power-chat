@@ -19,7 +19,7 @@ public class MainLauncher extends Application {
         Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("views/LoginView.fxml"));
         primaryStage.initStyle(StageStyle.UNDECORATED);
         primaryStage.setTitle("一起来聊天");
-        primaryStage.getIcons().add(new Image(getClass().getClassLoader().getResource("images/plug.png").toString()));
+        primaryStage.getIcons().add(new Image(getClass().getClassLoader().getResource("images/logo.png").toString()));
         Scene mainScene = new Scene(root, 350, 420);
         mainScene.setRoot(root);
         primaryStage.setResizable(false);

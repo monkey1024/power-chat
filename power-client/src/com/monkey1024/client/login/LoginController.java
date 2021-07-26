@@ -35,8 +35,8 @@ import java.util.ResourceBundle;
 
 public class LoginController implements Initializable {
     @FXML private ImageView defaultView;
-    @FXML private ImageView Sarahview;
-    @FXML private ImageView Dominicview;
+    @FXML private ImageView girlView;
+    @FXML private ImageView boyView;
     @FXML public  TextField hostnameTextfield;
     @FXML private TextField portTextfield;
     @FXML private TextField usernameTextfield;
@@ -110,29 +110,22 @@ public class LoginController implements Initializable {
 
         //处理头像
         imagePicker.getSelectionModel().selectedItemProperty().addListener((ChangeListener<String>) (selected, oldPicture, newPicture) -> {
-            if (oldPicture != null) {
-                switch (oldPicture) {
-                    case "Default":
-                        defaultView.setVisible(false);
-                        break;
-                    case "Dominic":
-                        Dominicview.setVisible(false);
-                        break;
-                    case "Sarah":
-                        Sarahview.setVisible(false);
-                        break;
-                }
-            }
-            if (newPicture != null) {
+            if (!oldPicture.equals(newPicture)) {
+                //隐藏所有头像
+                defaultView.setVisible(false);
+                boyView.setVisible(false);
+                girlView.setVisible(false);
+
+                //展示用户选中的头像
                 switch (newPicture) {
-                    case "Default":
+                    case "default":
                         defaultView.setVisible(true);
                         break;
-                    case "Dominic":
-                        Dominicview.setVisible(true);
+                    case "boy":
+                        boyView.setVisible(true);
                         break;
-                    case "Sarah":
-                        Sarahview.setVisible(true);
+                    case "girl":
+                        girlView.setVisible(true);
                         break;
                 }
             }

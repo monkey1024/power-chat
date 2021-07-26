@@ -125,10 +125,6 @@ public class ChatController implements Initializable {
         this.usernameLabel.setText(username);
     }
 
-    public void setImageLabel() {
-        this.userImageView.setImage(new Image(getClass().getClassLoader().getResource("images/dominic.png").toString()));
-    }
-
     public void setOnlineLabel(String count) {
         Platform.runLater(() -> onlineCountLabel.setText(count));
     }
@@ -157,7 +153,7 @@ public class ChatController implements Initializable {
             tray.setImage(profileImg);
             tray.showAndDismiss(Duration.seconds(5));
             try {
-                Media hit = new Media(getClass().getClassLoader().getResource("sounds/notification.wav").toString());
+                Media hit = new Media(getClass().getClassLoader().getResource("sounds/Global.wav").toString());
                 MediaPlayer mediaPlayer = new MediaPlayer(hit);
                 mediaPlayer.play();
             } catch (Exception e) {
@@ -181,7 +177,6 @@ public class ChatController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        setImageLabel();
 
         //处理鼠标拖拽界面
         new Drag().handleDrag(borderPane);
@@ -201,17 +196,21 @@ public class ChatController implements Initializable {
     }
 
     public void setImageLabel(String selectedPicture) {
+        String path = "";
+
         switch (selectedPicture) {
-            case "Dominic":
-                this.userImageView.setImage(new Image(getClass().getClassLoader().getResource("images/dominic.png").toString()));
+            case "boy":
+                path = "images/boy.png";
                 break;
-            case "Sarah":
-                this.userImageView.setImage(new Image(getClass().getClassLoader().getResource("images/sarah.png").toString()));
+            case "girl":
+                path = "images/girl.png";
                 break;
-            case "Default":
-                this.userImageView.setImage(new Image(getClass().getClassLoader().getResource("images/default.png").toString()));
+            case "default":
+                path = "images/default.png";
                 break;
         }
+
+        this.userImageView.setImage(new Image(getClass().getClassLoader().getResource(path).toString()));
     }
 
 }
