@@ -138,22 +138,26 @@ public class ChatController implements Initializable {
         });
     }
 
+
     /**
-     * 显示加入聊天的用户提示
+     *  用户提示
      * @param msg
+     * @param picture
+     * @param title
+     * @param sound
      */
-    public void newUserNotification(Message msg) {
+    public void notify(String msg,String picture,String title,String sound) {
         Platform.runLater(() -> {
-            Image profileImg = new Image(getClass().getClassLoader().getResource("images/" + msg.getPicture().toLowerCase() +".png").toString(),50,50,false,false);
+            Image profileImg = new Image(getClass().getClassLoader().getResource("images/" + picture +".png").toString(),50,50,false,false);
             TrayNotification tray = new TrayNotification();
-            tray.setTitle("新朋友来了");
-            tray.setMessage(msg.getName() + " 加入到聊天室");
+            tray.setTitle(title);
+            tray.setMessage(msg);
             tray.setRectangleFill(Paint.valueOf("#2C3E50"));
             tray.setAnimationType(AnimationType.POPUP);
             tray.setImage(profileImg);
             tray.showAndDismiss(Duration.seconds(5));
             try {
-                Media hit = new Media(getClass().getClassLoader().getResource("sounds/Global.wav").toString());
+                Media hit = new Media(getClass().getClassLoader().getResource(sound).toString());
                 MediaPlayer mediaPlayer = new MediaPlayer(hit);
                 mediaPlayer.play();
             } catch (Exception e) {

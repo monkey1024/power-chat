@@ -3,7 +3,6 @@ package com.monkey1024.server;
 import com.monkey1024.bean.Message;
 import com.monkey1024.bean.MessageType;
 import com.monkey1024.bean.User;
-import com.monkey1024.exception.DuplicateUsernameException;
 
 import java.io.*;
 import java.net.Socket;
@@ -29,9 +28,10 @@ public class Handler implements Runnable {
             outputStream = socket.getOutputStream();
             objectOutputStream = new ObjectOutputStream(outputStream);
 
-
             Message firstMessage = (Message) objectInputStream.readObject();
-            checkDuplicateUsername(firstMessage);
+            if (!checkDuplicateUsername(firstMessage)){
+                return;
+            }
             Server.writers.add(objectOutputStream);
             sendNotification(firstMessage);
             addToList();
@@ -61,17 +61,23 @@ public class Handler implements Runnable {
     /**
      * 检查用户名是否重复
      * @param message
-     * @throws DuplicateUsernameException
+     * @throws Exception
      */
-    private synchronized void checkDuplicateUsername(Message message) throws DuplicateUsernameException {
+    private synchronized boolean checkDuplicateUsername(Message message) throws Exception {
         if (!Server.names.containsKey(message.getName())) {
             user = new User();
             user.setName(message.getName());
             user.setPicture(message.getPicture());
             Server.names.put(message.getName(), user);
-
+            return true;
         } else {
-            throw new DuplicateUsernameException(message.getName() + " inputStream already connected");
+            Message msg = new Message();
+            msg.setMsg("用户名重复");
+            msg.setType(MessageType.ERROR);
+            msg.setName(message.getName());
+            msg.setPicture(message.getPicture());
+            write(msg);
+            return false;
         }
     }
 

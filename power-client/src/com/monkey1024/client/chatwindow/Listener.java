@@ -33,7 +33,6 @@ public class Listener implements Runnable {
         try {
             //获取io对象
             socket = new Socket(hostname, port);
-            LoginController.getInstance().showScene();
             outputStream = socket.getOutputStream();
             oos = new ObjectOutputStream(outputStream);
             inputStream = socket.getInputStream();
@@ -49,7 +48,11 @@ public class Listener implements Runnable {
                             chatController.showMsg(message);
                             break;
                         case NOTIFICATION:
-                            chatController.newUserNotification(message);
+                            LoginController.getInstance().showScene();
+                            chatController.notify(message.getName() + "加入聊天",message.getPicture(),"新朋友加入","sounds/Global.wav");
+                            break;
+                        case ERROR:
+                            chatController.notify(message.getMsg(),message.getPicture(),"出问题了","sounds/system.wav");
                             break;
                         case JOINED:
                         case DISCONNECTED:
