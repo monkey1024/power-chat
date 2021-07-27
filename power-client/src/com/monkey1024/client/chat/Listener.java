@@ -1,4 +1,4 @@
-package com.monkey1024.client.chatwindow;
+package com.monkey1024.client.chat;
 
 import com.monkey1024.bean.Message;
 import com.monkey1024.bean.MessageType;

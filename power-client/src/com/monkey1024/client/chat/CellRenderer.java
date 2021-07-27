@@ -1,4 +1,4 @@
-package com.monkey1024.client.chatwindow;
+package com.monkey1024.client.chat;
 
 import com.monkey1024.bean.User;
 import javafx.geometry.Pos;

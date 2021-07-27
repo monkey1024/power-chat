@@ -1,6 +1,6 @@
 package com.monkey1024.client.util;
 
-import com.monkey1024.client.login.MainLauncher;
+import com.monkey1024.MainLauncher;
 import javafx.scene.Cursor;
 import javafx.scene.layout.BorderPane;
 

@@ -1,8 +1,9 @@
 package com.monkey1024.client.login;
 
 
-import com.monkey1024.client.chatwindow.ChatController;
-import com.monkey1024.client.chatwindow.Listener;
+import com.monkey1024.MainLauncher;
+import com.monkey1024.client.chat.ChatController;
+import com.monkey1024.client.chat.Listener;
 import com.monkey1024.client.util.Drag;
 import com.monkey1024.client.util.ThreadPoolUtil;
 import com.trynotifications.util.ResizeHelper;

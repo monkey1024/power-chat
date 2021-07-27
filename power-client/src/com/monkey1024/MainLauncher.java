@@ -1,4 +1,4 @@
-package com.monkey1024.client.login;
+package com.monkey1024;
 
 import javafx.application.Application;
 import javafx.application.Platform;
