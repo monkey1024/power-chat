@@ -1,4 +1,4 @@
-package com.monkey1024.client.util;
+package com.trynotifications.util;
 
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;

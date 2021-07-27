@@ -1,4 +1,4 @@
-package com.monkey1024.traynotifications.models;
+package com.trynotifications.models;
 
 public class Location {
 

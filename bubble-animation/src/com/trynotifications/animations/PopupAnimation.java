@@ -1,7 +1,7 @@
-package com.monkey1024.traynotifications.animations;
+package com.trynotifications.animations;
 
+import com.trynotifications.models.CustomStage;
 import javafx.animation.*;
-import com.monkey1024.traynotifications.models.CustomStage;
 import javafx.util.Duration;
 
 public class PopupAnimation implements TrayAnimation {

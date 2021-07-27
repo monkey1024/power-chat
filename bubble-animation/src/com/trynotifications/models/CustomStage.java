@@ -1,4 +1,4 @@
-package com.monkey1024.traynotifications.models;
+package com.trynotifications.models;
 
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Rectangle2D;

@@ -2,12 +2,12 @@ package com.monkey1024.client.chatwindow;
 
 import com.monkey1024.bean.Message;
 import com.monkey1024.bean.User;
-import com.monkey1024.bean.bubble.BubbleSpec;
-import com.monkey1024.bean.bubble.BubbledLabel;
 import com.monkey1024.client.util.Drag;
 import com.monkey1024.client.util.ThreadPoolUtil;
-import com.monkey1024.traynotifications.animations.AnimationType;
-import com.monkey1024.traynotifications.notification.TrayNotification;
+import com.trynotifications.animations.AnimationType;
+import com.trynotifications.bean.BubbleSpec;
+import com.trynotifications.bean.BubbledLabel;
+import com.trynotifications.notification.TrayNotification;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

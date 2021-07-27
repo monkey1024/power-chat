@@ -1,4 +1,4 @@
-package com.monkey1024.traynotifications.animations;
+package com.trynotifications.animations;
 
 import java.util.ArrayList;
 import java.util.Collections;

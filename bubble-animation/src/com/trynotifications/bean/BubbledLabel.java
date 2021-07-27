@@ -1,4 +1,4 @@
-package com.monkey1024.bean.bubble;
+package com.trynotifications.bean;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;

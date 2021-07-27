@@ -1,7 +1,7 @@
-package com.monkey1024.traynotifications.notification;
+package com.trynotifications.notification;
 
-import com.monkey1024.traynotifications.animations.*;
-import com.monkey1024.traynotifications.models.CustomStage;
+import com.trynotifications.animations.*;
+import com.trynotifications.models.CustomStage;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;

@@ -28,13 +28,20 @@ public class Handler implements Runnable {
             outputStream = socket.getOutputStream();
             objectOutputStream = new ObjectOutputStream(outputStream);
 
+            //获取信息
             Message firstMessage = (Message) objectInputStream.readObject();
+
+            //判断用户名是否重复
             if (!checkDuplicateUsername(firstMessage)){
                 return;
             }
+
+            //将新加入聊天的输出流放入到set中
             Server.writers.add(objectOutputStream);
+            //发送新用户加入聊天的通知
             sendNotification(firstMessage);
-            addToList();
+
+            showOnlineUser();
 
             while (socket.isConnected()) {
                 Message message = (Message) objectInputStream.readObject();
@@ -44,7 +51,7 @@ public class Handler implements Runnable {
                             write(message);
                             break;
                         case JOINED:
-                            addToList();
+                            showOnlineUser();
                             break;
                     }
                 }
@@ -64,11 +71,11 @@ public class Handler implements Runnable {
      * @throws Exception
      */
     private synchronized boolean checkDuplicateUsername(Message message) throws Exception {
-        if (!Server.names.containsKey(message.getName())) {
+        if (!Server.userMap.containsKey(message.getName())) {
             user = new User();
             user.setName(message.getName());
             user.setPicture(message.getPicture());
-            Server.names.put(message.getName(), user);
+            Server.userMap.put(message.getName(), user);
             return true;
         } else {
             Message msg = new Message();
@@ -81,6 +88,11 @@ public class Handler implements Runnable {
         }
     }
 
+    /**
+     *  客户端显示加入群聊的消息
+     * @param message
+     * @throws IOException
+     */
     private void sendNotification(Message message) throws IOException {
         Message msg = new Message();
         msg.setMsg("加入群聊");
@@ -99,16 +111,15 @@ public class Handler implements Runnable {
         msg.setMsg("离开了聊天");
         msg.setType(MessageType.DISCONNECTED);
         msg.setName("SERVER");
-        msg.setOnlineUsers(new ArrayList<>(Server.names.values()));
         write(msg);
     }
 
     /**
-     *  新用户加入
+     *  向客户端显示当前在线用户
      * @return
      * @throws IOException
      */
-    private void addToList() throws IOException {
+    private void showOnlineUser() throws IOException {
         Message msg = new Message();
         msg.setMsg("欢迎加入聊天");
         msg.setType(MessageType.JOINED);
@@ -122,10 +133,11 @@ public class Handler implements Runnable {
      * @throws IOException
      */
     private void write(Message msg) throws IOException {
+        //设置在线用户
+        msg.setOnlineUsers(new ArrayList<>(Server.userMap.values()));
+        //将消息发送到客户端
         for (ObjectOutputStream writer : Server.writers) {
-            msg.setOnlineUsers(new ArrayList<>(Server.names.values()));
             writer.writeObject(msg);
-            writer.reset();
         }
     }
 
@@ -134,7 +146,7 @@ public class Handler implements Runnable {
      */
     private synchronized void closeConnections()  {
         if (user.getName() != null) {
-            Server.names.remove(user.getName());
+            Server.userMap.remove(user.getName());
         }
 
         if (objectOutputStream != null){

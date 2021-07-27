@@ -1,6 +1,6 @@
-package com.monkey1024.traynotifications.animations;
+package com.trynotifications.animations;
 
-import com.monkey1024.traynotifications.models.CustomStage;
+import com.trynotifications.models.CustomStage;
 import javafx.animation.*;
 import javafx.util.Duration;
 

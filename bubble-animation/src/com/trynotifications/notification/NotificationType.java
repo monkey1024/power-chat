@@ -1,4 +1,4 @@
-package com.monkey1024.traynotifications.notification;
+package com.trynotifications.notification;
 
 public enum NotificationType {
     INFORMATION,
