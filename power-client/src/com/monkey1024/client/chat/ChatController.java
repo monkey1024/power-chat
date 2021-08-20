@@ -69,7 +69,7 @@ public class ChatController implements Initializable {
         //别人发送的信息
         Task<HBox> othersMessages = new Task<HBox>() {
             @Override
-            public HBox call() throws Exception {
+            public HBox call() {
                 Image image = new Image(getClass().getClassLoader().getResource("images/" + msg.getPicture().toLowerCase() + ".png").toString());
                 ImageView profileImage = new ImageView(image);
                 profileImage.setFitHeight(32);
@@ -85,14 +85,14 @@ public class ChatController implements Initializable {
             }
         };
 
-        othersMessages.setOnSucceeded(event -> {
-            chatPane.getItems().add(othersMessages.getValue());
-        });
+        othersMessages.setOnSucceeded(event ->
+            chatPane.getItems().add(othersMessages.getValue())
+        );
 
         //自己发送的信息
         Task<HBox> yourMessages = new Task<HBox>() {
             @Override
-            public HBox call() throws Exception {
+            public HBox call() {
                 Image image = userImageView.getImage();
                 ImageView profileImage = new ImageView(image);
                 profileImage.setFitHeight(32);
