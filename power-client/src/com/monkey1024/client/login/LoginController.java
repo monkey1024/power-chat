@@ -49,6 +49,8 @@ public class LoginController implements Initializable {
 
     private static LoginController instance;
 
+
+
     public LoginController() {
         instance = this;
     }

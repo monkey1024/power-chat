@@ -10,23 +10,26 @@ import java.net.Socket;
 
 public class Listener implements Runnable {
 
-    private static String picture;
+    private String picture;
     private Socket socket;
     public String hostname;
     public int port;
-    public static String username;
+    public String username;
     public ChatController chatController;
-    private static ObjectOutputStream oos;
+    private ObjectOutputStream oos;
     private InputStream inputStream;
     private ObjectInputStream ois;
     private OutputStream outputStream;
 
+    public static Listener instance;
+
     public Listener(String hostname, int port, String username, String picture, ChatController chatController) {
         this.hostname = hostname;
         this.port = port;
-        Listener.username = username;
-        Listener.picture = picture;
+        this.username = username;
+        this.picture = picture;
         this.chatController = chatController;
+        instance = this;
     }
 
     public void run() {
@@ -72,7 +75,7 @@ public class Listener implements Runnable {
      * @param msg
      * @throws IOException
      */
-    public static void send(String msg) throws IOException {
+    public void send(String msg) throws IOException {
         Message newMsg = new Message();
         newMsg.setName(username);
         newMsg.setType(MessageType.TEXT);
@@ -86,7 +89,7 @@ public class Listener implements Runnable {
      *  连接
      * @throws IOException
      */
-    public static void connect() throws IOException {
+    public void connect() throws IOException {
         Message newMsg = new Message();
         newMsg.setName(username);
         newMsg.setType(MessageType.JOINED);
