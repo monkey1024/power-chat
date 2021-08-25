@@ -94,12 +94,9 @@ public class Handler implements Runnable {
      * @throws IOException
      */
     private void sendNotification(Message message) throws IOException {
-        Message msg = new Message();
-        msg.setMsg("加入群聊");
-        msg.setType(MessageType.NOTIFICATION);
-        msg.setName(message.getName());
-        msg.setPicture(message.getPicture());
-        write(msg);
+        message.setMsg("加入群聊");
+        message.setType(MessageType.NOTIFICATION);
+        write(message);
     }
 
     /**

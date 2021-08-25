@@ -12,10 +12,10 @@ public class Listener implements Runnable {
 
     private String picture;
     private Socket socket;
-    public String hostname;
-    public int port;
-    public String username;
-    public ChatController chatController;
+    private String hostname;
+    private int port;
+    private String username;
+    private ChatController chatController;
     private ObjectOutputStream oos;
     private InputStream inputStream;
     private ObjectInputStream ois;
